@@ -1,5 +1,6 @@
 package com.github.supermoonie.meilisearch.exceptions;
 
+import com.github.supermoonie.meilisearch.api.task.Task;
 import lombok.Getter;
 
 /**
@@ -35,5 +36,12 @@ public class MeiliSearchException extends Exception {
         this.type = apiError.getType();
         this.code = apiError.getCode();
         this.link = apiError.getLink();
+    }
+
+    public MeiliSearchException(Task.Error error) {
+        this.message = error.getMessage();
+        this.type = error.getType();
+        this.code = error.getCode();
+        this.link = error.getLink();
     }
 }

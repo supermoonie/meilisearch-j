@@ -12,7 +12,9 @@ import com.github.supermoonie.meilisearch.api.keys.*;
 import com.github.supermoonie.meilisearch.api.search.SearchHandler;
 import com.github.supermoonie.meilisearch.api.settings.SettingsHandler;
 import com.github.supermoonie.meilisearch.api.task.OpTask;
+import com.github.supermoonie.meilisearch.api.task.Task;
 import com.github.supermoonie.meilisearch.api.task.TasksHandler;
+import com.github.supermoonie.meilisearch.exceptions.MeiliSearchException;
 import com.github.supermoonie.meilisearch.http.AbstractHttpClient;
 import com.github.supermoonie.meilisearch.http.DefaultHttpClient;
 import com.github.supermoonie.meilisearch.http.factory.BasicRequestFactory;
@@ -80,8 +82,37 @@ public class MeiliSearchClient {
      * @return Meilisearch API response as Task
      * @throws Exception if an error occurs
      */
+    public Index createIndexSync(String uid) throws Exception {
+        return createIndexSync(uid, null);
+    }
+
+    /**
+     * Creates index Refer <a href="https://docs.meilisearch.com/reference/api/indexes.html#create-an-index">create-an-index</a>
+     *
+     * @param uid Unique identifier for the index to create
+     * @return Meilisearch API response as Task
+     * @throws Exception if an error occurs
+     */
     public OpTask createIndex(String uid) throws Exception {
         return this.createIndex(uid, null);
+    }
+
+    /**
+     * Creates index Refer <a href="https://docs.meilisearch.com/reference/api/indexes.html#create-an-index">create-an-index</a>
+     *
+     * @param uid        Unique identifier for the index to create
+     * @param primaryKey The primary key of the documents in that index
+     * @return Meilisearch API response as Task
+     * @throws Exception if an error occurs
+     */
+    public Index createIndexSync(String uid, String primaryKey) throws Exception {
+        OpTask opTask = this.indexesHandler.create(uid, primaryKey);
+        Task task = this.tasksHandler.waitForTask(opTask.getTaskUid());
+        if (TasksHandler.FAILED.equals(task.getStatus())) {
+            Task.Error error = task.getError();
+            throw new MeiliSearchException(error);
+        }
+        return this.getIndex(uid);
     }
 
     /**
