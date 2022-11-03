@@ -4,6 +4,7 @@ import com.github.supermoonie.meilisearch.MeiliSearchConfig;
 import com.github.supermoonie.meilisearch.http.request.HttpRequest;
 import com.github.supermoonie.meilisearch.http.response.BasicHttpResponse;
 import com.github.supermoonie.meilisearch.http.response.HttpResponse;
+import com.github.supermoonie.meilisearch.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class DefaultHttpClient extends AbstractHttpClient {
         connection.setRequestProperty("Content-Type", "application/json");
 
         // Use API key header only if one is provided
-        if (null != apiKey && !"".equals(apiKey)) {
+        if (StringUtils.isNotBlank(apiKey)) {
             connection.setRequestProperty("Authorization", this.meiliSearchConfig.getBearerApiKey());
         }
         connection.setConnectTimeout(5000);
@@ -72,7 +73,12 @@ public class DefaultHttpClient extends AbstractHttpClient {
         InputStream inputStream = connection.getInputStream();
 
         String content = null == inputStream ?
-                (null == errorStream ? null : readStreamToString(errorStream))
+                (
+                        null == errorStream ?
+                                null
+                                :
+                                readStreamToString(errorStream)
+                )
                 :
                 readStreamToString(inputStream);
 

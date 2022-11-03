@@ -4,6 +4,7 @@ import com.github.supermoonie.meilisearch.MeiliSearchConfig;
 import com.github.supermoonie.meilisearch.http.request.HttpRequest;
 import com.github.supermoonie.meilisearch.http.response.BasicHttpResponse;
 import com.github.supermoonie.meilisearch.http.response.HttpResponse;
+import com.github.supermoonie.meilisearch.utils.StringUtils;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -49,8 +50,9 @@ public class CustomOkHttpClient extends AbstractHttpClient {
         URL url = new URL(this.meiliSearchConfig.getHostUrl() + request.getPath());
         Request.Builder builder = new Request.Builder();
         builder.url(url);
-        if (this.meiliSearchConfig.getApiKey() != null)
+        if (StringUtils.isNotBlank(this.meiliSearchConfig.getApiKey())) {
             builder.addHeader("Authorization", this.meiliSearchConfig.getBearerApiKey());
+        }
         switch (request.getMethod()) {
             case GET:
                 builder.get();

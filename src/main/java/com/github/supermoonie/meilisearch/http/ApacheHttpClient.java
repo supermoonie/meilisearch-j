@@ -4,6 +4,7 @@ import com.github.supermoonie.meilisearch.MeiliSearchConfig;
 import com.github.supermoonie.meilisearch.http.request.HttpRequest;
 import com.github.supermoonie.meilisearch.http.response.BasicHttpResponse;
 import com.github.supermoonie.meilisearch.http.response.HttpResponse;
+import com.github.supermoonie.meilisearch.utils.StringUtils;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 import org.apache.hc.client5.http.async.methods.SimpleRequestProducer;
@@ -90,9 +91,12 @@ public class ApacheHttpClient extends AbstractHttpClient {
     private SimpleHttpRequest mapRequest(HttpRequest<?> request) {
         SimpleHttpRequest httpRequest =
                 new SimpleHttpRequest(request.getMethod().name(), this.meiliSearchConfig.getHostUrl() + request.getPath());
-        if (request.hasContent())
+        if (request.hasContent()) {
             httpRequest.setBody(request.getContentAsBytes(), ContentType.APPLICATION_JSON);
-        httpRequest.addHeader("Authorization", this.meiliSearchConfig.getBearerApiKey());
+        }
+        if (StringUtils.isNotBlank(this.meiliSearchConfig.getApiKey())) {
+            httpRequest.addHeader("Authorization", this.meiliSearchConfig.getBearerApiKey());
+        }
         return httpRequest;
     }
 
