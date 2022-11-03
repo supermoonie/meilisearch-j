@@ -27,14 +27,14 @@ public class IndexTest extends AppTest {
     }
 
     @Test
-    public void getDocument() throws Exception {
+    public void testGetDocument() throws Exception {
         Index index = meiliSearchClient.getIndex("book");
         Book book = index.getDocument(String.valueOf(1L), Book.class);
         System.out.println(meiliSearchClient.getJsonHandler().encode(book));
     }
 
     @Test
-    public void getDocuments() throws Exception {
+    public void testGetDocuments() throws Exception {
         Index index = meiliSearchClient.getIndex("book");
         DocumentsQueryResult<Book> result = index.getDocuments(new TypeReference<>() {
         });

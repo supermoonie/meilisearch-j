@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.supermoonie.meilisearch.exceptions.MeiliSearchException;
-import com.github.supermoonie.meilisearch.exceptions.MeiliSearchRuntimeException;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,7 +59,7 @@ public class JacksonJsonHandler implements JsonHandler {
     @Override
     public <T> T decode(String json, Class<T> targetClass) throws Exception {
         if (json == null) {
-            throw new MeiliSearchRuntimeException("String to deserialize is null");
+            return null;
         }
         if (targetClass == String.class) {
             return (T) json;
@@ -75,7 +74,7 @@ public class JacksonJsonHandler implements JsonHandler {
     @Override
     public <T> T decode(String json, TypeReference<T> typeReference) throws Exception {
         if (json == null) {
-            throw new MeiliSearchRuntimeException("String to deserialize is null");
+            return null;
         }
         try {
             return mapper.readValue(json, typeReference);
@@ -87,7 +86,7 @@ public class JacksonJsonHandler implements JsonHandler {
     @Override
     public <T> List<T> decodeList(String json, Class<T> elementClass) throws Exception {
         if (json == null) {
-            throw new MeiliSearchRuntimeException("String to deserialize is null");
+            return null;
         }
         try {
             return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, elementClass));

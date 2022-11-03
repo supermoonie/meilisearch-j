@@ -20,12 +20,14 @@ import com.github.supermoonie.meilisearch.http.factory.RequestFactory;
 import com.github.supermoonie.meilisearch.json.JacksonJsonHandler;
 import com.github.supermoonie.meilisearch.json.JsonHandler;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Administrator
  * @since 2022/11/2
  */
 @Getter
+@Slf4j
 public class MeiliSearchClient {
 
     private final JsonHandler jsonHandler;
@@ -103,11 +105,13 @@ public class MeiliSearchClient {
      */
     public Indexes getIndexes() throws Exception {
         Indexes indexes = this.indexesHandler.getAll();
-        for (Index index : indexes.getResults()) {
-            index.setDocumentsHandler(this.documentsHandler);
-            index.setSearchHandler(this.searchHandler);
-            index.setTasksHandler(this.tasksHandler);
-            index.setSettingsHandler(this.settingsHandler);
+        if (null != indexes.getResults()) {
+            for (Index index : indexes.getResults()) {
+                index.setDocumentsHandler(this.documentsHandler);
+                index.setSearchHandler(this.searchHandler);
+                index.setTasksHandler(this.tasksHandler);
+                index.setSettingsHandler(this.settingsHandler);
+            }
         }
         return indexes;
     }
@@ -122,6 +126,7 @@ public class MeiliSearchClient {
      */
     public Index getIndex(String uid) throws Exception {
         Index index = this.indexesHandler.get(uid);
+        if (null == index) return null;
         index.setDocumentsHandler(this.documentsHandler);
         index.setSearchHandler(this.searchHandler);
         index.setTasksHandler(this.tasksHandler);

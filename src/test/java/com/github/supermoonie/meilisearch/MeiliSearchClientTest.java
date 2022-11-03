@@ -31,7 +31,7 @@ public class MeiliSearchClientTest extends AppTest {
 
     @Test
     public void testGetIndex() throws Exception {
-        Index index = meiliSearchClient.getIndex("book");
+        Index index = meiliSearchClient.getIndex("book_");
         System.out.println(meiliSearchClient.getJsonHandler().encode(index));
     }
 

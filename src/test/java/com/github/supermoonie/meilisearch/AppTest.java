@@ -14,7 +14,7 @@ public class AppTest {
 
     @Before
     public void init() {
-        MeiliSearchConfig config = new MeiliSearchConfig("http://127.0.0.1:7700", "masterKey");
+        MeiliSearchConfig config = new MeiliSearchConfig("http://127.0.0.1:7700", "");
         AbstractHttpClient httpClient = new ApacheHttpClient(config);
         JsonHandler jsonHandler = new JacksonJsonHandler();
         meiliSearchClient = new MeiliSearchClient(jsonHandler, httpClient);

@@ -61,6 +61,9 @@ public class MeiliSearchHttpRequest {
         HttpResponse httpResponse =
                 this.client.execute(
                         factory.create(HttpMethod.GET, api + params, Collections.emptyMap(), null));
+        if (httpResponse.getStatusCode() == 404) {
+            return null;
+        }
         if (httpResponse.getStatusCode() >= 400) {
             throw new MeiliSearchApiException(
                     jsonHandler.decode(httpResponse.getContent(), ApiError.class));

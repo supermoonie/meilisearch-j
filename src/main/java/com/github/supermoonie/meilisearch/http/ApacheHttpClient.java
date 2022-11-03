@@ -21,13 +21,13 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ssl.TLS;
 import org.apache.hc.core5.http2.HttpVersionPolicy;
-import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -101,7 +101,7 @@ public class ApacheHttpClient extends AbstractHttpClient {
                 Arrays.stream(response.getHeaders())
                         .collect(Collectors.toConcurrentMap(NameValuePair::getName, NameValuePair::getValue)),
                 response.getCode(),
-                response.getBodyText());
+                new String(response.getBodyBytes(), StandardCharsets.UTF_8));
     }
 
     private FutureCallback<SimpleHttpResponse> getCallback(
