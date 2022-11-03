@@ -4,17 +4,28 @@ import com.github.supermoonie.meilisearch.MeiliSearchConfig;
 import com.github.supermoonie.meilisearch.http.request.HttpRequest;
 import com.github.supermoonie.meilisearch.http.response.BasicHttpResponse;
 import com.github.supermoonie.meilisearch.http.response.HttpResponse;
-import org.apache.hc.client5.http.async.HttpAsyncClient;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 import org.apache.hc.client5.http.async.methods.SimpleRequestProducer;
 import org.apache.hc.client5.http.async.methods.SimpleResponseConsumer;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.cookie.StandardCookieSpec;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.concurrent.FutureCallback;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.reactor.IOReactorConfig;
+import org.apache.hc.core5.http.ssl.TLS;
+import org.apache.hc.core5.http2.HttpVersionPolicy;
+import org.apache.hc.core5.io.CloseMode;
+import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
+import org.apache.hc.core5.pool.PoolReusePolicy;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 
 import java.util.Arrays;
@@ -29,18 +40,35 @@ import java.util.stream.Collectors;
  */
 public class ApacheHttpClient extends AbstractHttpClient {
 
-    private final HttpAsyncClient client;
+    private final CloseableHttpAsyncClient client;
 
     public ApacheHttpClient(MeiliSearchConfig meiliSearchConfig) {
         super(meiliSearchConfig);
-        final IOReactorConfig ioReactorConfig =
-                IOReactorConfig.custom().setSoTimeout(Timeout.ofSeconds(5)).build();
-        this.client = HttpAsyncClients.custom().setIOReactorConfig(ioReactorConfig).build();
+        PoolingAsyncClientConnectionManager connectionManager = PoolingAsyncClientConnectionManagerBuilder.create()
+                .setTlsStrategy(ClientTlsStrategyBuilder.create()
+                        .setSslContext(SSLContexts.createSystemDefault())
+                        .setTlsVersions(TLS.V_1_3, TLS.V_1_2)
+                        .build())
+                .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
+                .setConnPoolPolicy(PoolReusePolicy.LIFO)
+                .setConnectionTimeToLive(TimeValue.ofMinutes(2L))
+                .build();
+        this.client = HttpAsyncClients.custom()
+                .setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(Timeout.ofSeconds(5))
+                        .setResponseTimeout(Timeout.ofSeconds(5))
+                        .setCookieSpec(StandardCookieSpec.STRICT)
+                        .build())
+                .setVersionPolicy(HttpVersionPolicy.NEGOTIATE)
+                .build();
+        this.client.start();
     }
 
-    public ApacheHttpClient(MeiliSearchConfig meiliSearchConfig, HttpAsyncClient client) {
+    public ApacheHttpClient(MeiliSearchConfig meiliSearchConfig, CloseableHttpAsyncClient client) {
         super(meiliSearchConfig);
         this.client = client;
+        this.client.start();
     }
 
     @Override
@@ -61,7 +89,7 @@ public class ApacheHttpClient extends AbstractHttpClient {
 
     private SimpleHttpRequest mapRequest(HttpRequest<?> request) {
         SimpleHttpRequest httpRequest =
-                new SimpleHttpRequest(request.getMethod().name(), request.getPath());
+                new SimpleHttpRequest(request.getMethod().name(), this.meiliSearchConfig.getHostUrl() + request.getPath());
         if (request.hasContent())
             httpRequest.setBody(request.getContentAsBytes(), ContentType.APPLICATION_JSON);
         httpRequest.addHeader("Authorization", this.meiliSearchConfig.getBearerApiKey());

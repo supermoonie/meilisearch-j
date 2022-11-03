@@ -52,7 +52,8 @@ public class DefaultHttpClient extends AbstractHttpClient {
         if (null != apiKey && !"".equals(apiKey)) {
             connection.setRequestProperty("Authorization", this.meiliSearchConfig.getBearerApiKey());
         }
-
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
         connection.setUseCaches(false);
 
         return connection;

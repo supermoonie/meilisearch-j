@@ -1,5 +1,9 @@
 package com.github.supermoonie.meilisearch;
 
+import com.github.supermoonie.meilisearch.http.AbstractHttpClient;
+import com.github.supermoonie.meilisearch.http.ApacheHttpClient;
+import com.github.supermoonie.meilisearch.json.JacksonJsonHandler;
+import com.github.supermoonie.meilisearch.json.JsonHandler;
 import org.junit.Before;
 
 /**
@@ -10,7 +14,9 @@ public class AppTest {
 
     @Before
     public void init() {
-        MeiliSearchConfig config = new MeiliSearchConfig("http://127.0.0.1:7700", "wangchao123");
-        meiliSearchClient = new MeiliSearchClient(config);
+        MeiliSearchConfig config = new MeiliSearchConfig("http://127.0.0.1:7700", "masterKey");
+        AbstractHttpClient httpClient = new ApacheHttpClient(config);
+        JsonHandler jsonHandler = new JacksonJsonHandler();
+        meiliSearchClient = new MeiliSearchClient(jsonHandler, httpClient);
     }
 }
