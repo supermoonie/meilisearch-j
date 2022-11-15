@@ -140,26 +140,53 @@ public class Index {
     }
 
     /**
-     * Adds a document in the index
+     * Add an array of documents or replace them if they already exist.
+     * If the provided index does not exist, it will be created.
      *
      * @param documents Document to add in JSON string format
      * @return Task Meilisearch API response
      * @throws Exception if an error occurs
      */
-    public <D> OpTask addDocuments(List<D> documents) throws Exception {
+    public <D> OpTask addOrReplaceDocuments(List<D> documents) throws Exception {
         return this.documentsHandler.addOrReplaceDocuments(this.uid, documents, null);
     }
 
     /**
-     * Adds a document in the index
+     * Add an array of documents or replace them if they already exist.
+     * If the provided index does not exist, it will be created.
      *
      * @param documents  Document to add in JSON string format
      * @param primaryKey PrimaryKey of the document to add
      * @return Task Meilisearch API response
      * @throws Exception if an error occurs
      */
-    public <D> OpTask addDocuments(List<D> documents, String primaryKey) throws Exception {
+    public <D> OpTask addOrReplaceDocuments(List<D> documents, String primaryKey) throws Exception {
         return this.documentsHandler.addOrReplaceDocuments(this.uid, documents, primaryKey);
+    }
+
+    /**
+     * Add a list of documents or update them if they already exist.
+     * If the provided index does not exist, it will be created.
+     *
+     * @param documents  Document to add in JSON string format
+     * @param primaryKey PrimaryKey of the document to add
+     * @return Task Meilisearch API response
+     * @throws Exception if an error occurs
+     */
+    public <D> OpTask addOrUpdateDocuments(List<D> documents, String primaryKey) throws Exception {
+        return this.documentsHandler.addOrUpdateDocuments(this.uid, documents, primaryKey);
+    }
+
+    /**
+     * Add a list of documents or update them if they already exist.
+     * If the provided index does not exist, it will be created.
+     *
+     * @param documents Document to add in JSON string format
+     * @return Task Meilisearch API response
+     * @throws Exception if an error occurs
+     */
+    public <D> OpTask addOrUpdateDocuments(List<D> documents) throws Exception {
+        return this.documentsHandler.addOrUpdateDocuments(this.uid, documents, null);
     }
 
     /**

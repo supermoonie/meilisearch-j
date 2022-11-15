@@ -49,7 +49,7 @@ public class IndexTest extends AppTest {
                 new Book(2L, "诛仙", "萧鼎", "普通少年张小凡为救红颜，手持烧火棍与整个世界为敌，何为正，何为邪，可笑万物如刍狗，谁为覆雨谁翻云！"),
                 new Book(3L, "斗破苍穹", "天蚕土豆", "天才少年萧炎在创造了家族空前绝后的修炼纪录后突然成了废人，整整三年时间，家族冷遇，旁人轻视，被未婚妻退婚……种种打击接踵而至。就在他即将绝望的时候，一缕幽魂从他手上的戒指里浮现，一扇全新的大门在面前开启！这里是属于斗气的世界，没有花俏艳丽的魔法，有的，仅仅是繁衍到巅峰的斗气！")
         );
-        OpTask opTask = index.addDocuments(books);
+        OpTask opTask = index.addOrReplaceDocuments(books);
         System.out.println(meiliSearchClient.getJsonHandler().encode(opTask));
     }
 
