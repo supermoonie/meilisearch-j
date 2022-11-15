@@ -147,7 +147,7 @@ public class Index {
      * @throws Exception if an error occurs
      */
     public <D> OpTask addDocuments(List<D> documents) throws Exception {
-        return this.documentsHandler.addDocuments(this.uid, documents, null);
+        return this.documentsHandler.addOrReplaceDocuments(this.uid, documents, null);
     }
 
     /**
@@ -159,7 +159,7 @@ public class Index {
      * @throws Exception if an error occurs
      */
     public <D> OpTask addDocuments(List<D> documents, String primaryKey) throws Exception {
-        return this.documentsHandler.addDocuments(this.uid, documents, primaryKey);
+        return this.documentsHandler.addOrReplaceDocuments(this.uid, documents, primaryKey);
     }
 
     /**

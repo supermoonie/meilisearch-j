@@ -108,7 +108,8 @@ public class DocumentsHandler {
     }
 
     /**
-     * Adds/Replaces a document at the specified uid
+     * Add an array of documents or replace them if they already exist.
+     * If the provided index does not exist, it will be created.
      *
      * @param uid        Partial index identifier for the document
      * @param documents  String containing the document to add
@@ -116,11 +117,29 @@ public class DocumentsHandler {
      * @return Meilisearch's Task API response
      * @throws Exception if the client request causes an error
      */
-    public <D> OpTask addDocuments(String uid, List<D> documents, String primaryKey) throws Exception {
+    public <D> OpTask addOrReplaceDocuments(String uid, List<D> documents, String primaryKey) throws Exception {
         String urlQuery = "/indexes/" + uid + "/documents";
         if (StringUtils.isNotBlank(primaryKey)) {
             urlQuery += "?primaryKey=" + primaryKey;
         }
         return meilisearchHttpRequest.getJsonHandler().decode(meilisearchHttpRequest.post(urlQuery, documents), OpTask.class);
+    }
+
+    /**
+     * Add a list of documents or update them if they already exist.
+     * If the provided index does not exist, it will be created.
+     *
+     * @param uid        Partial index identifier for the document
+     * @param documents  String containing the document to add
+     * @param primaryKey PrimaryKey of the document
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public <D> OpTask addOrUpdateDocuments(String uid, List<D> documents, String primaryKey) throws Exception {
+        String urlQuery = "/indexes/" + uid + "/documents";
+        if (StringUtils.isNotBlank(primaryKey)) {
+            urlQuery += "?primaryKey=" + primaryKey;
+        }
+        return meilisearchHttpRequest.getJsonHandler().decode(meilisearchHttpRequest.put(urlQuery, documents), OpTask.class);
     }
 }

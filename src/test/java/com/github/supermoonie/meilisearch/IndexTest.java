@@ -55,7 +55,7 @@ public class IndexTest extends AppTest {
 
     @Test
     public void testGetAllSettings() throws Exception {
-        Index index = meiliSearchClient.getIndex("book");
+        Index index = meiliSearchClient.getIndex("books");
         Settings allSettings = index.getAllSettings();
         System.out.println(meiliSearchClient.getJsonHandler().encode(allSettings));
     }
