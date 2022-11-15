@@ -142,4 +142,42 @@ public class DocumentsHandler {
         }
         return meilisearchHttpRequest.getJsonHandler().decode(meilisearchHttpRequest.put(urlQuery, documents), OpTask.class);
     }
+
+    /**
+     * Delete all documents in the specified index.
+     *
+     * @param uid of the requested index
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public OpTask deleteAllDocument(String uid) throws Exception {
+        String urlQuery = "/indexes/" + uid + "/documents";
+        return meilisearchHttpRequest.getJsonHandler().decode(meilisearchHttpRequest.delete(urlQuery), OpTask.class);
+    }
+
+    /**
+     * Delete one documents in the specified index.
+     *
+     * @param uid        of the requested index
+     * @param documentId of the requested document
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public OpTask deleteOneDocument(String uid, String documentId) throws Exception {
+        String urlQuery = String.format("/indexes/%s/documents/%s", uid, documentId);
+        return meilisearchHttpRequest.getJsonHandler().decode(meilisearchHttpRequest.delete(urlQuery), OpTask.class);
+    }
+
+    /**
+     * Delete all documents in the specified index.
+     *
+     * @param uid         of the requested index
+     * @param documentIds of the requested document
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public OpTask deleteDocumentByBatch(String uid, List<String> documentIds) throws Exception {
+        String urlQuery = String.format("/indexes/%s/documents/delete-batch", uid);
+        return meilisearchHttpRequest.getJsonHandler().decode(meilisearchHttpRequest.post(urlQuery, documentIds), OpTask.class);
+    }
 }

@@ -190,6 +190,38 @@ public class Index {
     }
 
     /**
+     * Delete all documents in the specified index.
+     *
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public OpTask deleteAllDocument() throws Exception {
+        return this.documentsHandler.deleteAllDocument(this.uid);
+    }
+
+    /**
+     * Delete one documents in the specified index.
+     *
+     * @param documentId of the requested document
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public OpTask deleteOneDocument(String documentId) throws Exception {
+        return this.documentsHandler.deleteOneDocument(this.uid, documentId);
+    }
+
+    /**
+     * Delete all documents in the specified index.
+     *
+     * @param documentIds of the requested document
+     * @return Meilisearch's Task API response
+     * @throws Exception if the client request causes an error
+     */
+    public OpTask deleteDocumentByBatch(List<String> documentIds) throws Exception {
+        return this.documentsHandler.deleteDocumentByBatch(this.uid, documentIds);
+    }
+
+    /**
      * Retrieves an index tasks by its ID
      *
      * @param taskId Identifier of the requested index task
